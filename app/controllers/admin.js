@@ -1,9 +1,16 @@
 module.exports.form_add_noticia = function(app,req,res){
-    res.render("admin/form_add_noticia",{validacao:{}, noticia:{}});
-    app.app.controllers.admin.form_add_noticia(app,req,res);
+    if(req.session.autorizado){
+        res.render("admin/form_add_noticia",{validacao:{}, noticia:{},flagAdmin: req.session.autorizado});
+    }else{
+        var erro=[];
+        erro.push({
+            msg: 'Usuário precisa fazer login!'
+        })
+        res.render("admin/form_login",{validacao: erro, flagAdmin: req.session.autorizado})
+    }
 }
 module.exports.form_login = function(app,req,res){
-    res.render("admin/form_login",{validacao:{}})
+    res.render("admin/form_login",{validacao:{},flagAdmin: req.session.autorizado})
 }
 module.exports.noticias_salvar = function(app,req,res){
     var noticia = req.body;
@@ -30,7 +37,7 @@ module.exports.login_autenticar = function(app, req, res) {
     req.assert('senha','Senha é obrigatório').notEmpty();
     var erros = req.validationErrors();
     if(erros){
-        res.render("admin/form_login", { validacao: erros });
+        res.render("admin/form_login", { validacao: erros, flagAdmin: req.session.autorizado});
         return;
     }
 
@@ -43,15 +50,17 @@ autenticacao.getLogin(camposDeUsuario, function(error, result) {
         console.log("Erro SQL:", error);
         return res.status(500).send("Erro no servidor.");
     }
-
-    // Verifica se não encontrou usuário
     if (!result || result.length === 0) {
         const erro = [{ msg: 'Usuário ou senha incorretos!' }];
-        return res.render("login", { validacao: erro });
+        return res.render("admin/form_login", { validacao: erro, flagAdmin: false });
     }
-
-    // Login correto
     req.session.user = result[0];
-    return res.redirect("/principaisnoticias");
+    req.session.autorizado = true;
+    return res.redirect("/");
 });
+module.exports.sair = function(app,req,res){
+    req.session.destroy(function(erro){
+        res.redirect('/');
+    })
+}
 }

@@ -36,11 +36,8 @@
 				<img src="images/logo.png" />
 			</div>
 
-			<div id="navbar" class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="index.html">HOME</a></li>
-				</ul>
-			</div>
+			<%- include('../partes/navbar', { flagAdmin: flagAdmin }) %>
+
 		</div>
 	</nav>
 
@@ -101,7 +98,7 @@
 			</div>
 
 			<div class="row ver_mais">
-				<button type="button" class="btn btn-default"><a href="noticias.html">Ver todas as notícias</a></button>
+				<button type="button" class="btn btn-default"><a href="/principaisnoticias">Ver todas as notícias</a></button>
 			</div>
 
 		</div>
