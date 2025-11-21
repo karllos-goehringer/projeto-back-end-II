@@ -9,6 +9,18 @@ appServer.set('view engine', 'ejs')
 appServer.set('views', './app/views')
 appServer.use(express.static('./app/public'))
 appServer.use(bodyparser.urlencoded({extended:true}))
+var multer = require('multer');
+var configMulter = multer({
+  storage: multer.diskStorage({
+    destination: function(req,file,callback){
+      callback(null,'./app/public/uploads')
+    },
+    filename:function(req,file,callback){
+      callback(null, Date.now()+'-'+file.originalname)
+    }
+  })
+})
+appServer.upload = configMulter;
 appServer.use(session({
     secret: 'uma_chave_secreta',
     resave: false,
